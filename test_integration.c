@@ -13,13 +13,9 @@ return sin(t*t);
 }
 int main()
 {
- QuadFormula qf;
+QuadFormula qf;
 double I1, I2, I3;
-setQuadFormula(&qf, "trapezes");
+setQuadFormula(&qf, "left");
 I1 = integrate(f, -1, 4, 10, &qf);
-setQuadFormula(&qf, "middle");
-I2 = integrate(f, -1, 4, 10, &qf);
-setQuadFormula(&qf, "simpson");
-I3 = integrate_dx(f, -1, 4, 0.1, &qf);
-	return 0;
+return I1;
 }
