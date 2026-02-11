@@ -4,7 +4,30 @@
 
 bool setQuadFormula(QuadFormula* qf, char* name)
 {
-	if (strcmp("right", name)&&strcmp("left", name)&&strcmp("middle", name)&&strcmp("gauss2", name)&&strcmp("gauss3", name)&&strcmp("simpson", name)&&strcmp("trapezes", name)) return false;
+	if (!strcmp("right", name))
+	{
+		qf->n=0;
+		qf->w=1;
+		qf->x=1;
+	}
+	else if (!strcmp("left", name)){
+		qf->n=0;
+		qf->w=1;
+		qf->x=0;
+	}
+	else if (!strcmp("middle", name)){
+		qf->n=0;
+		qf->w=1;
+		qf->x=0.5;
+	}
+	else if (strcmp("gauss2", name)&&strcmp("gauss3", name)&&strcmp("simpson", name)) return false;
+	
+	else if (!strcmp("trapezes", name))
+	{
+		qf->n=1;
+		qf->w=0.5;
+		qf->x=0;
+	};
 
 	strcpy(qf->name, name);
 	return true;
@@ -17,34 +40,24 @@ void printQuadFormula(QuadFormula* qf)
   /* Print everything else that may be useful */
 }
 
-double left (double (*f)(double), double a, double b, int N){
+double integrate(double (*f)(double), double a, double b, int N, QuadFormula* qf)
+{
 	double result=0.0, a_aux,b_aux;
+	double result_aux=0.0;
+
 	for (int i=0; i<N; i++){
 
 		a_aux = a +i *((b-a)/N);
 		b_aux = a+(i+1)*((b-a)/N);
-
-		result += (b_aux-a_aux)*f(a_aux);
+		printf("%2f", qf->n);
+		for (int j=0; j<qf->n;j++){
+			result_aux+=qf->w*(*f)(a_aux +(qf->x)*(b_aux-a_aux));
+		}
+		result += (b_aux-a_aux)*result_aux;
 	}
+	printf("%.2f\n",result);
 	return result;
 }
-double integrate(double (*f)(double), double a, double b, int N, QuadFormula* qf)
-{
-	double result=0.0;
-	char *name=qf->name;
-
-	if (strcmp("left", name)) result = left(f,a,b,N);
-	return result;
-}
-
-
-
-
-
-
-
-
-
 
 
 
