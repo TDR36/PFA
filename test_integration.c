@@ -9,14 +9,14 @@
 #include <math.h>
 double f(double t)
 {
-return log(t);
+return sin(t);
 }
 int main()
 {
 QuadFormula qf;
 double I1, I2, I3;
-setQuadFormula(&qf, "left");
-I1 = integrate(f,1 , 3, 100, &qf);
+setQuadFormula(&qf, "right");
+I1 = integrate(f,0 , 3.14, 10, &qf);
 
 return I1;
 }
