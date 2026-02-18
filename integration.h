@@ -17,7 +17,9 @@ typedef struct{
   char name[20]; /* Name of the quadrature formula. */
 int n;
 double w;
-int x;
+double x;
+double add_to_x;
+double add_to_w;
 } QuadFormula;
 
 #ifdef INTEGRATION_C
