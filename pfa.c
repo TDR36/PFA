@@ -15,7 +15,8 @@
           The number of subdivisions will be N such that (b-a)/N ~ dt
 */
 bool init_integration(char* quadrature, double dt)
-{ 
+{
+	if (dt<0||(strcmp("right", quadrature)&&strcmp("left", quadrature)&&strcmp("middle", quadrature)&&strcmp("trapezes", quadrature)&&strcmp("gauss2", quadrature)&&strcmp("gauss3", quadrature)&&strcmp("simpson", quadrature)) return false;
   return true;
 }
 
@@ -30,7 +31,7 @@ double phi(double x)
 /* Cumulative distribution function of the normal distribution */
 double PHI(double x)
 {
-  return 0.0;
+  return 0.5 + integrate_dx(phi(
 }
 
 /* =====================================
