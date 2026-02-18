@@ -52,7 +52,7 @@ double integrate(double (*f)(double), double a, double b, int N, QuadFormula* qf
 		result_aux=0.0;
 		for (int j=0; j<=qf->n;j++){
 			result_aux+=qf->w*(*f)(a_aux +qf->x*(b_aux-a_aux));
-
+			qf->x++;
 		}
 		result += (b_aux-a_aux)*result_aux;
 	}

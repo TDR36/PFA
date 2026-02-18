@@ -5,12 +5,13 @@
 
 #include "integration.h"
 
-/* Code here everything you need to test the integration methods and show your numericzal results */
 #include <math.h>
+
 double f(double t)
 {
 return sin(t);
 }
+
 int main()
 {
 QuadFormula qf;
