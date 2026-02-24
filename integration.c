@@ -11,6 +11,8 @@ bool setQuadFormula(QuadFormula* qf, char* name)
 		qf->x=1;
 		qf->add_to_x=0;
 		qf->add_to_w=0;
+		strcpy(qf->name, name);
+		return true;
 	}
 	else if (!strcmp("left", name)){
 		qf->n=0;
@@ -18,6 +20,8 @@ bool setQuadFormula(QuadFormula* qf, char* name)
 		qf->x=0;
 		qf->add_to_x=0;
 		qf->add_to_w=0;
+		strcpy(qf->name, name);
+		return true;
 	}
 	else if (!strcmp("middle", name)){
 		qf->n=0;
@@ -25,6 +29,8 @@ bool setQuadFormula(QuadFormula* qf, char* name)
 		qf->x=0.5;
 		qf->add_to_x=0;
 		qf->add_to_w=0;
+		strcpy(qf->name, name);
+		return true;
 	}
 	
 	else if (!strcmp("trapezes", name))
@@ -34,6 +40,8 @@ bool setQuadFormula(QuadFormula* qf, char* name)
 		qf->x=0;
 		qf->add_to_x=1;
 		qf->add_to_w=0;
+		strcpy(qf->name, name);
+		return true;
 	}
 
 	else if (!strcmp("simpson", name))
@@ -43,6 +51,8 @@ bool setQuadFormula(QuadFormula* qf, char* name)
 		qf->x=0;
 		qf->add_to_x=0.5;
 		qf->add_to_w=0.4999999999;
+		strcpy(qf->name, name);
+		return true;
 	}
 
 	else if (!strcmp("gauss2", name))
@@ -52,6 +62,8 @@ bool setQuadFormula(QuadFormula* qf, char* name)
 		qf->x=0.788675113459;
 		qf->add_to_x=1.73205080757;
 		qf->add_to_w=0;
+		strcpy(qf->name, name);
+		return true;
 	}
 	else if (!strcmp("gauss3", name))
 	{
@@ -60,10 +72,10 @@ bool setQuadFormula(QuadFormula* qf, char* name)
 		qf->x=0.11270166537;
 		qf->add_to_x=0.38729833462;
 		qf->add_to_w=0.16666666666;
+		strcpy(qf->name, name);
+		return true;
 	}
-
-	strcpy(qf->name, name);
-	return true;
+	return false;
 }
 
 void printQuadFormula(QuadFormula* qf)
@@ -107,5 +119,6 @@ double integrate_dx(double (*f)(double), double a, double b, double dx, QuadForm
 	return integrate(f, a, b, N, qf);
 
 }
+
 
 
