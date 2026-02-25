@@ -39,12 +39,18 @@ double PHI(double x)
 */
 double optionPrice(Option* option)
 {
-
-	double z0= (log(option->K/option->S0) - (option->mu-((option->sig*option->sig)/2))*option->T)/(option->sig*sqrt(option->T));
-	if (!option->type) double C=option->S0*exp(option->mu * option->T)*PHI(option->sig*sqrt(option->T-z0)-option->K*PHI(-z0);
-
-	else double C=option->K*PHI(z0)-option->S0*exp(option->mu *option->T)*PHI(z0-option->sig*sqrt(option->T));
+	printf("%.3f\n",option->S0); 
+	double C;
+	double z0= ((log(option->K / option->S0) - (option->mu - ((option->sig * option->sig) /2 )) * option->T) / ( option->sig * sqrt( option->T ) ) );
 	
+	if (option->type==CALL){
+	C=option->S0 * exp(option->mu * option->T) * PHI(option->sig*sqrt(option->T)-z0)-option->K*PHI(-z0);
+	}
+
+	else {
+	C=option->K*PHI(z0)-option->S0*exp(option->mu *option->T)*PHI(z0-option->sig*sqrt(option->T));
+	}
+
   return C;
 }
 

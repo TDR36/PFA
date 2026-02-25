@@ -28,7 +28,7 @@ typedef struct{
   /* Parameters of the distribution of random variable S_T (price of the underlying asset at time T) */
   double mu;
   double sig;
-} Option;
+} Option; //10.5172
 
 
 /* Don't change this type. The functions about insurance take an argument of type InsuredClient *.  */
