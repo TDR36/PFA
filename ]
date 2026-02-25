@@ -1,3 +1,5 @@
+// #define GRAPHIC
+
 #define PFA_C
 
 #include "pfa.h"
@@ -11,10 +13,9 @@
           The number of subdivisions will be N such that (b-a)/N ~ dt
 */
 bool init_integration(char* quadrature, double dt)
-{
+{ 
 	if (!(strcmp("right", quadrature)&&strcmp("left", quadrature)&&strcmp("middle", quadrature)&&strcmp("trapezes", quadrature)&&strcmp("simpson", quadrature)&&strcmp("gauss2", quadrature)&&strcmp("gauss3", quadrature))&&dt>0){
-		pfa_dt=dt;
-		setQuadFormula(&pfaQF, quadrature);
+		setQuadFormula(pfaQF, quadrature);
 		return true;
 	}
 	return false;
@@ -31,7 +32,7 @@ double phi(double x)
 /* Cumulative distribution function of the normal distribution */
 double PHI(double x)
 {
-  return 1.0/2.0+integrate_dx(phi,0,x,pfa_dt,&pfaQF) ;
+  return 1.0/2.0+integrate_dx(phi,0,x,pfa_dt,pfaQF) ;
 }
 
 /* =====================================
@@ -39,13 +40,8 @@ double PHI(double x)
 */
 double optionPrice(Option* option)
 {
-
-	double z0= (log(option->K/option->S0) - (option->mu-((option->sig*option->sig)/2))*option->T)/(option->sig*sqrt(option->T));
-	if (!option->type) double C=option->S0*exp(option->mu * option->T)*PHI(option->sig*sqrt(option->T-z0)-option->K*PHI(-z0);
-
-	else double C=option->K*PHI(z0)-option->S0*exp(option->mu *option->T)*PHI(z0-option->sig*sqrt(option->T));
-	
-  return C;
+//	double St=option->S0*exp((mu-(sig*sig)/2)*T + sig*sqrt(T)*pfa_dt;
+  return 0.0;
 }
 
 
