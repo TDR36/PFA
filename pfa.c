@@ -1,5 +1,3 @@
-
-
 // #define GRAPHIC
 
 #define PFA_C
@@ -15,9 +13,11 @@
           The number of subdivisions will be N such that (b-a)/N ~ dt
 */
 bool init_integration(char* quadrature, double dt)
-{
-	if (dt<0||(strcmp("right", quadrature)&&strcmp("left", quadrature)&&strcmp("middle", quadrature)&&strcmp("trapezes", quadrature)&&strcmp("gauss2", quadrature)&&strcmp("gauss3", quadrature)&&strcmp("simpson", quadrature)) return false;
-  return true;
+{ 
+	if (!(strcmp("right", quadrature)&&strcmp("left", quadrature)&&strcmp("middle", quadrature)&&strcmp("trapezes", quadrature)&&strcmp("simpson", quadrature)&&strcmp("gauss2", quadrature)&&strcmp("gauss3", quadrature))&&dt>0){
+		return true;
+	}
+	return false;
 }
 
 
@@ -25,13 +25,15 @@ bool init_integration(char* quadrature, double dt)
 /* Density of the normal distribution */
 double phi(double x)
 {
-  return 0.398942280401433 * exp( -x*x/2 );
+	
+
+	return 0.398942280401433 * exp( -x*x/2 );
 }
 
 /* Cumulative distribution function of the normal distribution */
 double PHI(double x)
 {
-  return 0.5 + integrate_dx(phi(
+  return 0.0;
 }
 
 /* =====================================
@@ -65,13 +67,57 @@ double clientCDF_X(InsuredClient* client, double x)
 }
 
 
+/* ==========================================================*/
+/* Distribution of X1+X2 : static intermediate functions     */
+
+/* The static functions localProductPDF and localPDF_X1X2 take only one
+   argument, of type double.
+   They hence can be integrated: function integrate_dx takes as argument a function pointer f, 
+   where f depends only on one argument (double t).
+   The static functions below can be given as argument to integrate_dx.
+
+   That's why we copy other variables of the final functions (client and x) to local static variables, 
+   and define these static functions depending on only one argument (double t).
+   These local functions can hence be arguments of integrate_dx.
+*/
+static InsuredClient* localClient;
+static double localX;
+
+
+/* This function assumes that static variables localClient and localX have been set.
+   It can be an argument of integrate_dx (since it has the good signature)
+*/
+static double localProductPDF(double t)
+{
+  return clientPDF_X(localClient, localX - t) * clientPDF_X(localClient, t);
+}
+
+/* Density of X1+X2
+
+   This function assumes that static variable localClient has been set.
+   It is called by clientPDF_X1X2
+   It can also be an argument of integrate_dx (since it has the good signature)
+*/
+static double localPDF_X1X2(double x)
+{
+  localX = x;
+  return 0.0;
+} 
+
+
+/* ==========================================================*/
+/* Distribution of X1+X2 : the final functions               */
+
 /* Probability density function (PDF) of variable X1+X2.
    X1 and X2 are the reimbursements of the two claims from the client (assuming there are 
    two claims).
 */
 double clientPDF_X1X2(InsuredClient* client, double x)
 {
-  return 0.0;
+  if ( x<=0 ) return 0.0;
+
+  localClient = client;
+  return localPDF_X1X2(x);
 }
 
 
@@ -81,6 +127,8 @@ double clientPDF_X1X2(InsuredClient* client, double x)
 */
 double clientCDF_X1X2(InsuredClient* client, double x)
 {
+  localClient = client;
+
   return 0.0;
 }
 
@@ -93,7 +141,5 @@ double clientCDF_S(InsuredClient* client, double x)
 {
   return 0.0;
 }
-
-
 
 
