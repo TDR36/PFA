@@ -51,7 +51,7 @@ double optionPrice(Option* option)
 	C=option->K*PHI(z0)-option->S0*exp(option->mu *option->T)*PHI(z0-option->sig*sqrt(option->T));
 	}
 
-  return C;
+	return C;
 }
 
 
@@ -62,9 +62,10 @@ double optionPrice(Option* option)
 /* Probability density function (PDF) of variable X.
    X is the reimbursement in case of a claim from the client.
 */
+
 double clientPDF_X(InsuredClient* client, double x)
 {
-  return 0.0;
+  return (x<=0) ? 0 : 1/(client->s*x) *phi((log(x)-client->m)/client->s);
 }
 
 
@@ -73,7 +74,7 @@ double clientPDF_X(InsuredClient* client, double x)
 */
 double clientCDF_X(InsuredClient* client, double x)
 {
-  return 0.0;
+  return (x<=0) ? 0 : PHI((log(x)-client->m)/client->m);
 }
 
 
@@ -110,8 +111,8 @@ static double localProductPDF(double t)
 */
 static double localPDF_X1X2(double x)
 {
-  localX = x;
-  return 0.0;
+	localX = x; 
+  return integrate_dx(;
 } 
 
 
@@ -122,7 +123,7 @@ static double localPDF_X1X2(double x)
    X1 and X2 are the reimbursements of the two claims from the client (assuming there are 
    two claims).
 */
-double clientPDF_X1X2(InsuredClient* client, double x)
+double clientPDF_X1X2(InsuredClient* client, double x)i           //
 {
   if ( x<=0 ) return 0.0;
 
