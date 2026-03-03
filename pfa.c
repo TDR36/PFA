@@ -12,12 +12,10 @@
 */
 bool init_integration(char* quadrature, double dt)
 {
-	if (!(strcmp("right", quadrature)&&strcmp("left", quadrature)&&strcmp("middle", quadrature)&&strcmp("trapezes", quadrature)&&strcmp("simpson", quadrature)&&strcmp("gauss2", quadrature)&&strcmp("gauss3", quadrature))&&dt>0){
-		pfa_dt=dt;
-		setQuadFormula(&pfaQF, quadrature);
-		return true;
-	}
-	return false;
+	if (quadrature == NULL || dt <= 0.0) return false;
+	if (!setQuadFormula(&pfaQF, quadrature)) return false;
+    pfa_dt = dt;
+    return true;
 }
 
 
@@ -25,13 +23,13 @@ bool init_integration(char* quadrature, double dt)
 /* Density of the normal distribution */
 double phi(double x)
 {
-	return 0.398942280401433 * exp( -x*x/2 );
+	return 0.398942280401433 * exp( (-(x*x))/2 );
 }
 
 /* Cumulative distribution function of the normal distribution */
 double PHI(double x)
 {
-  return 1.0/2.0+integrate_dx(phi,0,x,pfa_dt,&pfaQF) ;
+  return 1.0/2.0+integrate_dx(phi,0.0,x,pfa_dt,&pfaQF) ;
 }
 
 /* =====================================
@@ -39,19 +37,21 @@ double PHI(double x)
 */
 double optionPrice(Option* option)
 {
+	if (!option) return 0.0;
 	printf("%.3f\n",option->S0); 
 	double C;
-	double z0= ((log(option->K / option->S0) - (option->mu - ((option->sig * option->sig) /2 )) * option->T) / ( option->sig * sqrt( option->T ) ) );
+	double S0=option->S0;
+	double K=option->K, mu=option->mu, sig=option->sig, T=option->T
+	
+	double z0= ((log(K / S0) - (mu - ((sig * sig) /2.0 )) * T) / ( sig * sqrt(T)));
 	
 	if (option->type==CALL){
-	C=option->S0 * exp(option->mu * option->T) * PHI(option->sig*sqrt(option->T)-z0)-option->K*PHI(-z0);
+	 return S0 * exp(mu * T) * PHI(sig*sqrt(T)-z0)-K*PHI(-z0);
 	}
 
 	else {
-	C=option->K*PHI(z0)-option->S0*exp(option->mu *option->T)*PHI(z0-option->sig*sqrt(option->T));
+	 return K*PHI(z0)-S0*exp(mu *T)*PHI(z0-sig*sqrt(T));
 	}
-
-	return C;
 }
 
 
@@ -65,7 +65,8 @@ double optionPrice(Option* option)
 
 double clientPDF_X(InsuredClient* client, double x)
 {
-  return (x<=0) ? 0 : 1/(client->s*x) *phi((log(x)-client->m)/client->s);
+	if (!client) return 0.0;
+  	return (x<=0.0) ? 0.0 : 1.0/(client->s*x) *phi((log(x)-client->m)/client->s);
 }
 
 
@@ -74,7 +75,8 @@ double clientPDF_X(InsuredClient* client, double x)
 */
 double clientCDF_X(InsuredClient* client, double x)
 {
-  return (x<=0) ? 0 : PHI((log(x)-client->m)/client->m);
+	if (!client) return 0.0;
+ 	return (x<=0.0) ? 0.0 : PHI((log(x)-client->m)/client->s);
 }
 
 
@@ -100,7 +102,7 @@ static double localX;
 */
 static double localProductPDF(double t)
 {
-  return clientPDF_X(localClient, localX - t) * clientPDF_X(localClient, t);
+  return clientPDF_X(localClient, t) * clientPDF_X(localClient, localX-t);
 }
 
 /* Density of X1+X2
@@ -112,7 +114,7 @@ static double localProductPDF(double t)
 static double localPDF_X1X2(double x)
 {
 	localX = x; 
-  return integrate_dx(;
+  	return integrate_dx(localProductPDF,0.0,x,pfa_dt,&pfaQF);
 } 
 
 
@@ -128,7 +130,7 @@ double clientPDF_X1X2(InsuredClient* client, double x)i           //
   if ( x<=0 ) return 0.0;
 
   localClient = client;
-  return localPDF_X1X2(x);
+  return (x<=0.0) ? 0.0 : localPDF_X1X2(x);
 }
 
 
@@ -138,9 +140,10 @@ double clientPDF_X1X2(InsuredClient* client, double x)i           //
 */
 double clientCDF_X1X2(InsuredClient* client, double x)
 {
-  localClient = client;
+	if (!client) return 0.0;
+  	localClient = client;
 
-  return 0.0;
+  	return integrate_dx(localPDF_X1X2, 0.0,x,pfa_dt,&pfaQF);
 }
 
 
@@ -150,7 +153,12 @@ double clientCDF_X1X2(InsuredClient* client, double x)
 */
 double clientCDF_S(InsuredClient* client, double x)
 {
-  return 0.0;
+	if (!client) return 0.0;
+	if (x<0.0) return 0.0;
+	if (!x) return client->p[0];
+
+	return client->p[0] + client->p[1]*clientCDF_X(client, X) + client->p[2]*clientCDF_X1X2(client,x);
 }
+
 
 
