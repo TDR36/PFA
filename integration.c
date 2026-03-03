@@ -104,7 +104,6 @@ double integrate(double (*f)(double), double a, double b, int N, QuadFormula* qf
 		w_init = qf->w;
 		result += (b_aux-a_aux)*result_aux;
 	}
-	printf("name: %s  %.20f\n", qf->name, result);
 	return result;
 }
 
@@ -119,6 +118,7 @@ double integrate_dx(double (*f)(double), double a, double b, double dx, QuadForm
 	return integrate(f, a, b, N, qf);
 
 }
+
 
 
 
