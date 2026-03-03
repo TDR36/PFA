@@ -42,7 +42,6 @@ double PHI(double x)
 double optionPrice(Option* option)
 {
 	if (!option) return 0.0;
-	printf("%.3f\n",option->S0); 
 	double C;
 	double S0=option->S0;
 	double K=option->K, mu=option->mu, sig=option->sig, T=option->T;
@@ -163,6 +162,7 @@ double clientCDF_S(InsuredClient* client, double x)
 
 	return client->p[0] + client->p[1]*clientCDF_X(client, x) + client->p[2]*clientCDF_X1X2(client,x);
 }
+
 
 
 
