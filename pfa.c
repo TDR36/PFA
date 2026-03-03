@@ -1,6 +1,10 @@
 #define PFA_C
 
 #include "pfa.h"
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+
 
 /* Initialize the integration variables.
    Arguments :
@@ -29,7 +33,7 @@ double phi(double x)
 /* Cumulative distribution function of the normal distribution */
 double PHI(double x)
 {
-  return 1.0/2.0+integrate_dx(phi,0.0,x,pfa_dt,&pfaQF) ;
+  return 0.5+integrate_dx(phi,0.0,x,pfa_dt,&pfaQF) ;
 }
 
 /* =====================================
@@ -41,7 +45,7 @@ double optionPrice(Option* option)
 	printf("%.3f\n",option->S0); 
 	double C;
 	double S0=option->S0;
-	double K=option->K, mu=option->mu, sig=option->sig, T=option->T
+	double K=option->K, mu=option->mu, sig=option->sig, T=option->T;
 	
 	double z0= ((log(K / S0) - (mu - ((sig * sig) /2.0 )) * T) / ( sig * sqrt(T)));
 	
@@ -125,9 +129,9 @@ static double localPDF_X1X2(double x)
    X1 and X2 are the reimbursements of the two claims from the client (assuming there are 
    two claims).
 */
-double clientPDF_X1X2(InsuredClient* client, double x)i           //
+double clientPDF_X1X2(InsuredClient* client, double x)     //
 {
-  if ( x<=0 ) return 0.0;
+  if (!client) return 0.0;
 
   localClient = client;
   return (x<=0.0) ? 0.0 : localPDF_X1X2(x);
@@ -140,7 +144,7 @@ double clientPDF_X1X2(InsuredClient* client, double x)i           //
 */
 double clientCDF_X1X2(InsuredClient* client, double x)
 {
-	if (!client) return 0.0;
+	if (!client||x<=0.0) return 0.0;
   	localClient = client;
 
   	return integrate_dx(localPDF_X1X2, 0.0,x,pfa_dt,&pfaQF);
@@ -155,10 +159,11 @@ double clientCDF_S(InsuredClient* client, double x)
 {
 	if (!client) return 0.0;
 	if (x<0.0) return 0.0;
-	if (!x) return client->p[0];
+	if (x==0.0) return client->p[0];
 
-	return client->p[0] + client->p[1]*clientCDF_X(client, X) + client->p[2]*clientCDF_X1X2(client,x);
+	return client->p[0] + client->p[1]*clientCDF_X(client, x) + client->p[2]*clientCDF_X1X2(client,x);
 }
+
 
 
 
