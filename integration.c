@@ -4,31 +4,32 @@
 
 bool setQuadFormula(QuadFormula* qf, char* name)
 {
+	if (!qf||!name) return false;
 	if (!strcmp("right", name))
 	{
 		qf->n=0;
-		qf->w=1;
-		qf->x=1;
-		qf->add_to_x=0;
-		qf->add_to_w=0;
+		qf->w=1.0;
+		qf->x=1.0;
+		qf->add_to_x=0.0;
+		qf->add_to_w=0.0;
 		strcpy(qf->name, name);
 		return true;
 	}
 	else if (!strcmp("left", name)){
 		qf->n=0;
-		qf->w=1;
-		qf->x=0;
-		qf->add_to_x=0;
-		qf->add_to_w=0;
+		qf->w=1.0;
+		qf->x=0.0;
+		qf->add_to_x=0.0;
+		qf->add_to_w=0.0;
 		strcpy(qf->name, name);
 		return true;
 	}
 	else if (!strcmp("middle", name)){
 		qf->n=0;
-		qf->w=1;
+		qf->w=1.0;
 		qf->x=0.5;
-		qf->add_to_x=0;
-		qf->add_to_w=0;
+		qf->add_to_x=0.0;
+		qf->add_to_w=0.0;
 		strcpy(qf->name, name);
 		return true;
 	}
@@ -37,9 +38,9 @@ bool setQuadFormula(QuadFormula* qf, char* name)
 	{
 		qf->n=1;
 		qf->w=0.5;
-		qf->x=0;
-		qf->add_to_x=1;
-		qf->add_to_w=0;
+		qf->x=0.0;
+		qf->add_to_x=1.0;
+		qf->add_to_w=0.0;
 		strcpy(qf->name, name);
 		return true;
 	}
@@ -47,8 +48,8 @@ bool setQuadFormula(QuadFormula* qf, char* name)
 	else if (!strcmp("simpson", name))
 	{
 		qf->n=2;
-		qf->w=0.1666666666;
-		qf->x=0;
+		qf->w=1.0/6.0;
+		qf->x=0.0;
 		qf->add_to_x=0.5;
 		qf->add_to_w=0.4999999999;
 		strcpy(qf->name, name);
@@ -59,9 +60,9 @@ bool setQuadFormula(QuadFormula* qf, char* name)
 	{
 		qf->n=1;
 		qf->w=0.5;
-		qf->x=0.788675113459;
-		qf->add_to_x=1.73205080757;
-		qf->add_to_w=0;
+		qf->x=0.21132486540518713;
+		qf->add_to_x=0.5773502691896257;
+		qf->add_to_w=0.0;
 		strcpy(qf->name, name);
 		return true;
 	}
@@ -85,6 +86,7 @@ void printQuadFormula(QuadFormula* qf)
 
 double integrate(double (*f)(double), double a, double b, int N, QuadFormula* qf)
 {
+	if (!f||!qf||N<=0) return 0.0;
 	double result=0.0, a_aux,b_aux;
 	double result_aux=0.0;
 
@@ -113,11 +115,13 @@ double integrate(double (*f)(double), double a, double b, int N, QuadFormula* qf
 
 double integrate_dx(double (*f)(double), double a, double b, double dx, QuadFormula* qf)
 {
-	size_t N = (int)round(abs(b-a)/dx);
-	if (!N) N=1;
+	if (dx<=0.0) return 0.0;
+	int N = (int)round(fabs(b-a)/dx);
+	if (N<1) N=1;
 	return integrate(f, a, b, N, qf);
 
 }
+
 
 
 
